@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  SELLER
+  BUYER
+}
+
 model User {
   id            Int       @id @default(autoincrement())
   name          String
@@ -15,12 +20,94 @@ model User {
   email         String    @unique
   password      String
   gender        String    @default("Prefer not to say")
-  role          Role      @default(USER)
+  role          Role      @default(BUYER)
+  avatar        String?
+  phone         String?
+  address       String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  products      Product[]
+  orders        Order[]
+  sentMessages  Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  
+  @@map("users")
 }
 
-enum Role {
-  USER
-  ADMIN
+model Product {
+  id            Int       @id @default(autoincrement())
+  name          String
+  description   String
+  price         Float
+  category      String
+  images        String[] // Array of image URLs
+  stock         Int       @default(0)
+  isActive      Boolean   @default(true)
+  sellerId      Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  seller        User      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  orderItems    OrderItem[]
+  
+  @@map("products")
+}
+
+model Order {
+  id            Int       @id @default(autoincrement())
+  buyerId       Int
+  totalAmount   Float
+  status        OrderStatus @default(PENDING)
+  shippingAddress String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  buyer         User      @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  items         OrderItem[]
+  
+  @@map("orders")
+}
+
+model OrderItem {
+  id            Int       @id @default(autoincrement())
+  orderId       Int
+  productId     Int
+  quantity      Int
+  price         Float // Price at time of order
+  createdAt     DateTime  @default(now())
+  
+  // Relations
+  order         Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product   @relation(fields: [productId], references: [id])
+  
+  @@map("order_items")
+}
+
+model Message {
+  id            Int       @id @default(autoincrement())
+  senderId      Int
+  receiverId    Int
+  content       String
+  sessionId     String // Unique session identifier for chat
+  isRead        Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  
+  // Relations
+  sender        User      @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver      User      @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  
+  @@map("messages")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
 }
