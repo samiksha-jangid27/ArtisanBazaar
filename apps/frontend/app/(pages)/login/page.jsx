@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { ArrowLeft } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -86,7 +87,19 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-100 via-white to-pink-50 px-4 relative">
+  <div className="min-h-screen flex flex-row">
+    {/* LEFT SIDE IMAGE */}
+    <div className="hidden md:block w-1/2">
+      <Image
+        src="/your-image.jpg"
+        alt="Login Visual"
+        className="w-full h-full object-cover"
+      />
+    </div>
+
+    {/* RIGHT SIDE LOGIN FORM */}
+    <div className="w-full md:w-1/2 flex items-center justify-center bg-linear-to-br from-pink-100 via-white to-pink-50 px-6 relative">
+      
       <button
         onClick={() => router.push("/")}
         className="absolute top-6 left-6 flex items-center gap-2 text-gray-700 hover:text-pink-600 transition"
@@ -163,7 +176,8 @@ function Login() {
         </p>
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default Login;

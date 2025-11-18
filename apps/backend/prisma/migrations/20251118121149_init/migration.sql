@@ -1,15 +1,14 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'SELLER', 'BUYER');
 
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
+    "name" TEXT,
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "gender" TEXT NOT NULL DEFAULT 'Prefer not to say',
-    "role" "Role" NOT NULL DEFAULT 'USER',
+    "role" "Role" NOT NULL DEFAULT 'BUYER',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
