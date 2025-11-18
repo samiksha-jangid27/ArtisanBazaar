@@ -14,6 +14,8 @@ import {
   Save,
   X,
   Edit,
+  Package,
+  Heart,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -23,11 +25,7 @@ function ProfilePage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    username: "",
-    gender: "",
-  });
+  const [formData, setFormData] = useState({ name: "", username: "", gender: "" });
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
@@ -69,13 +67,11 @@ function ProfilePage() {
             username: res.data.user.username || "",
             gender: res.data.user.gender || "",
           });
-        } 
-        else {
+        } else {
           toast.error("Invalid response format ❌");
           setMessage("Invalid response format ❌");
         }
-      } 
-      catch (err) {
+      } catch (err) {
         const msg = getErrorMessage(err, "Error fetching profile");
         console.error("Profile fetch error:", err);
         setMessage(`❌ ${msg}`);
@@ -83,12 +79,10 @@ function ProfilePage() {
           toast.error("Session expired. Please log in again.");
           logout();
           router.push("/login");
-        } 
-        else {
+        } else {
           toast.error(`❌ ${msg}`);
         }
-      } 
-      finally {
+      } finally {
         setLoading(false);
       }
     };
@@ -102,8 +96,7 @@ function ProfilePage() {
     router.push("/");
   };
 
-  const handleChange = (e) =>
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e) => setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -112,10 +105,7 @@ function ProfilePage() {
 
     try {
       const res = await axios.put(`${BASE_URL}/api/auth/update`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         timeout: 8000,
       });
 
@@ -124,31 +114,26 @@ function ProfilePage() {
         setEditing(false);
         toast.success("✅ Profile updated successfully!");
         setMessage("✅ Profile updated successfully!");
-      } 
-      else {
+      } else {
         const msg = res.data?.ERROR || "Failed to update profile ❌";
         toast.error(msg);
         setMessage(`❌ ${msg}`);
       }
-    } 
-    catch (err) {
+    } catch (err) {
       const msg = getErrorMessage(err, "Error updating profile");
       console.error("Update error:", err);
       toast.error(`❌ ${msg}`);
       setMessage(`❌ ${msg}`);
-    } 
-    finally {
+    } finally {
       setSaving(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 via-white to-pink-100 text-gray-600">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 via-white to-emerald-50 text-gray-600">
         <div className="animate-pulse text-center">
-          <p className="text-lg font-medium text-pink-600">
-            Loading your profile...
-          </p>
+          <p className="text-lg font-semibold text-emerald-700">Loading your Artisan Bazaar profile...</p>
         </div>
       </div>
     );
@@ -156,191 +141,192 @@ function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center text-gray-700">
+      <div className="min-h-screen flex flex-col items-center justify-center text-gray-700 px-4">
         <p className="text-lg">No profile data found ❌</p>
-        <button
-          onClick={() => router.push("/login")}
-          className="mt-4 bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition"
-        >
-          Go to Login
-        </button>
+        <div className="mt-4 flex gap-3">
+          <button onClick={() => router.push('/login')} className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition">Go to Login</button>
+          <button onClick={() => router.push('/')} className="border border-emerald-600 text-emerald-600 px-4 py-2 rounded-lg hover:bg-emerald-50 transition">Back Home</button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-white to-pink-50 py-10 px-4 flex flex-col items-center">
-      <div className="w-full max-w-4xl flex items-center justify-between mb-8">
-        <button
-          onClick={() => router.push("/")}
-          className="flex items-center gap-2 text-gray-700 hover:text-pink-600 transition"
-        >
-          <ArrowLeft size={20} />
-          <span className="font-medium">Back to Home</span>
-        </button>
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 py-8 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <button onClick={() => router.push('/')} className="flex items-center gap-2 text-gray-700 hover:text-emerald-700 transition">
+              <ArrowLeft size={20} />
+              <span className="font-medium">Back to Home</span>
+            </button>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-emerald-800">Artisan Bazaar</h1>
+          </div>
 
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 border border-red-500 text-red-600 px-4 py-2 rounded-lg hover:bg-red-50 transition"
-        >
-          <LogOut size={18} />
-          Logout
-        </button>
-      </div>
-
-      <div className="w-full max-w-4xl bg-white rounded-3xl shadow-xl border border-pink-100 overflow-hidden">
-        <div className="bg-gradient-to-r from-pink-500 via-pink-400 to-rose-400 h-36 relative flex items-end justify-center">
-          <div className="absolute -bottom-10 w-24 h-24 rounded-full bg-white shadow-md flex items-center justify-center">
-            <UserCircle2 size={60} className="text-pink-600" />
+          <div className="flex items-center gap-3">
+            <button onClick={() => router.push('/orders')} className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition">My Orders</button>
+            <button onClick={handleLogout} className="flex items-center gap-2 border border-emerald-600 text-emerald-600 px-3 py-2 rounded-lg hover:bg-emerald-50 transition">
+              <LogOut size={16} />
+              Logout
+            </button>
           </div>
         </div>
 
-        <div className="pt-16 pb-10 px-8 text-center">
-          <h2 className="text-3xl font-semibold text-gray-800">
-            {user.name}
-          </h2>
-          <p className="text-gray-500 mt-1">@{user.username}</p>
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-3">
+          {/* Cover */}
+          <div className="lg:col-span-1 bg-gradient-to-b from-emerald-600 to-emerald-400 p-6 flex flex-col items-center justify-center relative">
+            <div className="w-36 h-36 rounded-full bg-white shadow-lg -mt-20 flex items-center justify-center border-4 border-white">
+              <UserCircle2 size={86} className="text-emerald-600" />
+            </div>
 
-          <p className="mt-4 text-sm text-gray-500 italic">
-            “Spreading smiles, one gift at a time 🎁”
-          </p>
+            <div className="mt-6 text-center text-white">
+              <h2 className="text-xl font-semibold">{user.name}</h2>
+              <p className="text-sm opacity-90">@{user.username}</p>
+              <p className="mt-2 text-xs italic opacity-90">Handmade & heart-made — for craft lovers</p>
+            </div>
 
-          {message && (
-            <p
-              className={`text-center mt-4 text-sm ${
-                message.includes("✅") ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              {message}
-            </p>
-          )}
-
-          {!editing ? (
-            <>
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 text-left max-w-md mx-auto">
-                <div className="flex items-center gap-3 text-gray-700">
-                  <Mail size={18} className="text-pink-600" />
-                  <span>{user.email}</span>
-                </div>
-
-                <div className="flex items-center gap-3 text-gray-700">
-                  <User size={18} className="text-pink-600" />
-                  <span>{user.gender || "Prefer not to say"}</span>
-                </div>
-
-                <div className="flex items-center gap-3 text-gray-700">
-                  <Calendar size={18} className="text-pink-600" />
-                  <span>
-                    Joined{" "}
-                    {new Date(user.createdAt || Date.now()).toLocaleDateString(
-                      "en-IN",
-                      { year: "numeric", month: "long", day: "numeric" }
-                    )}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-3 text-gray-700">
-                  <span className="font-medium text-gray-600">Role:</span>
-                  <span className="font-medium text-pink-600 uppercase">
-                    {user.role || "USER"}
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <button
-                  onClick={() => setEditing(true)}
-                  className="bg-pink-600 text-white px-6 py-2.5 rounded-lg hover:bg-pink-700 transition flex items-center gap-2"
-                >
-                  <Edit size={18} />
-                  Edit Profile
-                </button>
-                <button
-                  onClick={() => router.push("/orders")}
-                  className="border border-pink-600 text-pink-600 px-6 py-2.5 rounded-lg hover:bg-pink-50 transition"
-                >
-                  View My Orders
-                </button>
-              </div>
-            </>
-          ) : (
-            <form
-              onSubmit={handleUpdate}
-              className="mt-8 max-w-md mx-auto space-y-5 text-left"
-            >
+            <div className="mt-6 w-full grid grid-cols-3 gap-3 text-center">
               <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-pink-500 outline-none transition-all"
-                />
+                <div className="text-2xl font-bold text-white">{user.ordersCount ?? 0}</div>
+                <div className="text-xs opacity-90">Orders</div>
               </div>
-
               <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-pink-500 outline-none transition-all"
-                />
+                <div className="text-2xl font-bold text-white">{user.wishlistCount ?? 0}</div>
+                <div className="text-xs opacity-90">Wishlist</div>
               </div>
-
               <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Gender
-                </label>
-                <select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-pink-500 outline-none transition-all"
-                >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                  <option value="Prefer not to say">Prefer not to say</option>
-                </select>
+                <div className="text-2xl font-bold text-white">{user.rating ?? '—'}</div>
+                <div className="text-xs opacity-90">Rating</div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <button onClick={() => setEditing(true)} className="bg-white text-emerald-700 px-3 py-2 rounded-lg hover:scale-105 transform transition flex items-center gap-2">
+                <Edit size={16} />
+                Edit
+              </button>
+              <button onClick={() => router.push('/orders')} className="border border-white text-white px-3 py-2 rounded-lg hover:bg-white/10 transition flex items-center gap-2">
+                <Package size={16} />
+                Orders
+              </button>
+            </div>
+          </div>
+
+          {/* Details */}
+          <div className="lg:col-span-2 p-8">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-2xl font-semibold text-gray-800">Profile Details</h3>
+                <p className="text-sm text-gray-500 mt-1">Manage your personal information and account settings.</p>
               </div>
 
-              <div className="flex items-center justify-center gap-4 mt-6">
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="bg-pink-600 text-white px-6 py-2.5 rounded-lg hover:bg-pink-700 transition flex items-center gap-2 disabled:opacity-60"
-                >
-                  <Save size={18} />
-                  {saving ? "Saving..." : "Save Changes"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditing(false)}
-                  className="border border-gray-400 text-gray-600 px-6 py-2.5 rounded-lg hover:bg-gray-50 transition flex items-center gap-2"
-                >
-                  <X size={18} />
-                  Cancel
+              <div className="hidden sm:flex items-center gap-3">
+                <button onClick={handleLogout} className="text-sm border border-rose-500 text-rose-600 px-3 py-2 rounded-lg hover:bg-rose-50 transition flex items-center gap-2">
+                  <LogOut size={14} />
+                  Logout
                 </button>
               </div>
-            </form>
-          )}
+            </div>
+
+            {message && (
+              <p className={`mt-4 text-sm ${message.includes("✅") ? "text-green-600" : "text-red-600"}`}>{message}</p>
+            )}
+
+            {!editing ? (
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-4 border rounded-lg">
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <Mail size={18} className="text-emerald-600" />
+                    <div>
+                      <div className="text-sm text-gray-500">Email</div>
+                      <div className="font-medium">{user.email}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 border rounded-lg">
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <User size={18} className="text-emerald-600" />
+                    <div>
+                      <div className="text-sm text-gray-500">Gender</div>
+                      <div className="font-medium">{user.gender || 'Prefer not to say'}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 border rounded-lg">
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <Calendar size={18} className="text-emerald-600" />
+                    <div>
+                      <div className="text-sm text-gray-500">Joined</div>
+                      <div className="font-medium">{new Date(user.createdAt || Date.now()).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 border rounded-lg">
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <span className="font-medium text-gray-500">Role</span>
+                    <span className="ml-auto font-semibold text-emerald-600 uppercase">{user.role || 'USER'}</span>
+                  </div>
+                </div>
+
+                <div className="md:col-span-2 flex gap-3">
+                  <button onClick={() => setEditing(true)} className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition flex items-center gap-2">
+                    <Edit size={16} />
+                    Edit Profile
+                  </button>
+
+                  <button onClick={() => router.push('/wishlist')} className="border border-emerald-600 text-emerald-600 px-4 py-2 rounded-lg hover:bg-emerald-50 transition flex items-center gap-2">
+                    <Heart size={16} />
+                    Wishlist
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleUpdate} className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-2">
+                  <label className="block text-gray-700 font-medium mb-1">Full Name</label>
+                  <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-emerald-500 outline-none transition-all" />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 font-medium mb-1">Username</label>
+                  <input type="text" name="username" value={formData.username} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-emerald-500 outline-none transition-all" />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 font-medium mb-1">Gender</label>
+                  <select name="gender" value={formData.gender} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-emerald-500 outline-none transition-all">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
+                  </select>
+                </div>
+
+                <div className="md:col-span-2 flex items-center gap-3 mt-4">
+                  <button type="submit" disabled={saving} className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition flex items-center gap-2 disabled:opacity-60">
+                    <Save size={16} />
+                    {saving ? 'Saving...' : 'Save Changes'}
+                  </button>
+
+                  <button type="button" onClick={() => { setEditing(false); setFormData({ name: user.name || '', username: user.username || '', gender: user.gender || '' }); }} className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition flex items-center gap-2">
+                    <X size={16} />
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
-      </div>
 
-      <footer className="mt-12 text-gray-500 text-sm text-center">
-        <p>
-          © {new Date().getFullYear()}{" "}
-          <span className="text-pink-600 font-medium">Messia</span> — Made with
-          ❤️ for Gifting Lovers
-        </p>
-      </footer>
+        <footer className="mt-8 text-center text-sm text-gray-500">
+          <p>
+            © {new Date().getFullYear()} <span className="text-emerald-600 font-semibold">Artisan Bazaar</span> — Curated crafts & gifts
+          </p>
+        </footer>
+      </div>
     </div>
   );
 }
