@@ -131,9 +131,9 @@ function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 via-white to-emerald-50 text-gray-600">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50 text-gray-600">
         <div className="animate-pulse text-center">
-          <p className="text-lg font-semibold text-emerald-700">Loading your Artisan Bazaar profile...</p>
+          <p className="text-lg font-semibold text-blue-700">Loading your Artisan Bazaar profile...</p>
         </div>
       </div>
     );
@@ -144,28 +144,28 @@ function ProfilePage() {
       <div className="min-h-screen flex flex-col items-center justify-center text-gray-700 px-4">
         <p className="text-lg">No profile data found ❌</p>
         <div className="mt-4 flex gap-3">
-          <button onClick={() => router.push('/login')} className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition">Go to Login</button>
-          <button onClick={() => router.push('/')} className="border border-emerald-600 text-emerald-600 px-4 py-2 rounded-lg hover:bg-emerald-50 transition">Back Home</button>
+          <button onClick={() => router.push('/login')} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Go to Login</button>
+          <button onClick={() => router.push('/')} className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition">Back Home</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <button onClick={() => router.push('/')} className="flex items-center gap-2 text-gray-700 hover:text-emerald-700 transition">
+            <button onClick={() => router.push('/')} className="flex items-center gap-2 text-gray-700 hover:text-blue-700 transition">
               <ArrowLeft size={20} />
               <span className="font-medium">Back to Home</span>
             </button>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-emerald-800">Artisan Bazaar</h1>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-blue-800">Artisan Bazaar</h1>
           </div>
 
           <div className="flex items-center gap-3">
-            <button onClick={() => router.push('/orders')} className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition">My Orders</button>
-            <button onClick={handleLogout} className="flex items-center gap-2 border border-emerald-600 text-emerald-600 px-3 py-2 rounded-lg hover:bg-emerald-50 transition">
+            <button onClick={() => router.push('/orders')} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">My Orders</button>
+            <button onClick={handleLogout} className="flex items-center gap-2 border border-blue-600 text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-50 transition">
               <LogOut size={16} />
               Logout
             </button>
@@ -174,9 +174,9 @@ function ProfilePage() {
 
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-3">
           {/* Cover */}
-          <div className="lg:col-span-1 bg-gradient-to-b from-emerald-600 to-emerald-400 p-6 flex flex-col items-center justify-center relative">
+          <div className="lg:col-span-1 bg-gradient-to-b from-blue-600 to-blue-400 p-6 flex flex-col items-center justify-center relative">
             <div className="w-36 h-36 rounded-full bg-white shadow-lg -mt-20 flex items-center justify-center border-4 border-white">
-              <UserCircle2 size={86} className="text-emerald-600" />
+              <UserCircle2 size={86} className="text-blue-600" />
             </div>
 
             <div className="mt-6 text-center text-white">
@@ -201,7 +201,7 @@ function ProfilePage() {
             </div>
 
             <div className="mt-6 flex gap-3">
-              <button onClick={() => setEditing(true)} className="bg-white text-emerald-700 px-3 py-2 rounded-lg hover:scale-105 transform transition flex items-center gap-2">
+              <button onClick={() => setEditing(true)} className="bg-white text-blue-700 px-3 py-2 rounded-lg hover:scale-105 transform transition flex items-center gap-2">
                 <Edit size={16} />
                 Edit
               </button>
@@ -221,7 +221,7 @@ function ProfilePage() {
               </div>
 
               <div className="hidden sm:flex items-center gap-3">
-                <button onClick={handleLogout} className="text-sm border border-rose-500 text-rose-600 px-3 py-2 rounded-lg hover:bg-rose-50 transition flex items-center gap-2">
+                <button onClick={handleLogout} className="text-sm border border-blue-500 text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-50 transition flex items-center gap-2">
                   <LogOut size={14} />
                   Logout
                 </button>
@@ -236,7 +236,7 @@ function ProfilePage() {
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="p-4 border rounded-lg">
                   <div className="flex items-center gap-3 text-gray-700">
-                    <Mail size={18} className="text-emerald-600" />
+                    <Mail size={18} className="text-blue-600" />
                     <div>
                       <div className="text-sm text-gray-500">Email</div>
                       <div className="font-medium">{user.email}</div>
@@ -246,7 +246,7 @@ function ProfilePage() {
 
                 <div className="p-4 border rounded-lg">
                   <div className="flex items-center gap-3 text-gray-700">
-                    <User size={18} className="text-emerald-600" />
+                    <User size={18} className="text-blue-600" />
                     <div>
                       <div className="text-sm text-gray-500">Gender</div>
                       <div className="font-medium">{user.gender || 'Prefer not to say'}</div>
@@ -256,7 +256,7 @@ function ProfilePage() {
 
                 <div className="p-4 border rounded-lg">
                   <div className="flex items-center gap-3 text-gray-700">
-                    <Calendar size={18} className="text-emerald-600" />
+                    <Calendar size={18} className="text-blue-600" />
                     <div>
                       <div className="text-sm text-gray-500">Joined</div>
                       <div className="font-medium">{new Date(user.createdAt || Date.now()).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
@@ -267,17 +267,17 @@ function ProfilePage() {
                 <div className="p-4 border rounded-lg">
                   <div className="flex items-center gap-3 text-gray-700">
                     <span className="font-medium text-gray-500">Role</span>
-                    <span className="ml-auto font-semibold text-emerald-600 uppercase">{user.role || 'USER'}</span>
+                    <span className="ml-auto font-semibold text-blue-600 uppercase">{user.role || 'USER'}</span>
                   </div>
                 </div>
 
                 <div className="md:col-span-2 flex gap-3">
-                  <button onClick={() => setEditing(true)} className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition flex items-center gap-2">
+                  <button onClick={() => setEditing(true)} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
                     <Edit size={16} />
                     Edit Profile
                   </button>
 
-                  <button onClick={() => router.push('/wishlist')} className="border border-emerald-600 text-emerald-600 px-4 py-2 rounded-lg hover:bg-emerald-50 transition flex items-center gap-2">
+                  <button onClick={() => router.push('/wishlist')} className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition flex items-center gap-2">
                     <Heart size={16} />
                     Wishlist
                   </button>
@@ -287,17 +287,17 @@ function ProfilePage() {
               <form onSubmit={handleUpdate} className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="md:col-span-2">
                   <label className="block text-gray-700 font-medium mb-1">Full Name</label>
-                  <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-emerald-500 outline-none transition-all" />
+                  <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
                 </div>
 
                 <div>
                   <label className="block text-gray-700 font-medium mb-1">Username</label>
-                  <input type="text" name="username" value={formData.username} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-emerald-500 outline-none transition-all" />
+                  <input type="text" name="username" value={formData.username} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
                 </div>
 
                 <div>
                   <label className="block text-gray-700 font-medium mb-1">Gender</label>
-                  <select name="gender" value={formData.gender} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-emerald-500 outline-none transition-all">
+                  <select name="gender" value={formData.gender} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
@@ -306,7 +306,7 @@ function ProfilePage() {
                 </div>
 
                 <div className="md:col-span-2 flex items-center gap-3 mt-4">
-                  <button type="submit" disabled={saving} className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition flex items-center gap-2 disabled:opacity-60">
+                  <button type="submit" disabled={saving} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 disabled:opacity-60">
                     <Save size={16} />
                     {saving ? 'Saving...' : 'Save Changes'}
                   </button>
@@ -323,7 +323,7 @@ function ProfilePage() {
 
         <footer className="mt-8 text-center text-sm text-gray-500">
           <p>
-            © {new Date().getFullYear()} <span className="text-emerald-600 font-semibold">Artisan Bazaar</span> — Curated crafts & gifts
+            © {new Date().getFullYear()} <span className="text-blue-600 font-semibold">Artisan Bazaar</span> — Curated crafts & gifts
           </p>
         </footer>
       </div>
