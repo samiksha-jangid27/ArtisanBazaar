@@ -84,84 +84,85 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 via-white to-blue-50 px-4 relative">
+  <div className="min-h-screen w-full flex gap-0 md:gap-10 bg-white">
+    
+    {/* LEFT SIDE — VIDEO SECTION */}
+    <div className="w-1/2 hidden md:flex items-center justify-center bg-white">
+      <video 
+        autoPlay 
+        muted 
+        playsInline 
+        className="w-150 h-150 bg-white"
+      >
+        <source src="/ARTISANBAZAAR.mp4" type="video/mp4" /> 
+      </video>
+      
+      {/* Dark overlay tint */}
+      {/* <div className="absolute inset-0 bg-black/30"></div> */}
+    </div>
+
+    {/* RIGHT SIDE — LOGIN FORM */}
+   <div className="w-full md:w-[58%] flex flex-col items-center justify-center p-8 bg-white animate-slideIn">
+      
       <button
         onClick={() => router.push("/")}
-        className="absolute top-6 left-6 flex items-center gap-2 text-gray-700 hover:text-blue-600 transition"
+        className="absolute top-6 right-6 text-gray-700 hover:text-black transition flex items-center gap-1"
       >
-        <ArrowLeft size={20} />
-        <span className="font-medium">Back to Home</span>
+        <ArrowLeft size={18} /> Back
       </button>
 
-      <div className="w-full max-w-md bg-white/90 backdrop-blur-lg p-8 rounded-2xl shadow-lg border border-blue-100">
-        <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">
-          Welcome Back to <span className="text-blue-600">Artisan Bazaar</span>
-        </h2>
+      <h2 className="text-4xl font-bold text-black mb-8">Artisan Bazaar</h2>
 
+      <div className="w-full max-w-sm">
         <form onSubmit={handleSubmit} className="space-y-6">
+
           <div>
-            <label className="block text-gray-700 font-medium mb-1">
-              Email or Username
-            </label>
+            <label className="block text-gray-800 font-semibold mb-1">Email / Username</label>
             <input
               type="text"
               name="input"
-              required
               value={formData.input}
               onChange={handleChange}
-              placeholder="you@example.com or john_doe"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              placeholder="your@email.com"
+              className="w-full border border-black rounded-md px-4 py-2.5 text-black outline-none focus:ring-2 focus:ring-black"
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium mb-1">
-              Password
-            </label>
+            <label className="block text-gray-800 font-semibold mb-1">Password</label>
             <input
               type="password"
               name="password"
-              required
               value={formData.password}
               onChange={handleChange}
               placeholder="••••••••"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-800 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              className="w-full border border-black rounded-md px-4 py-2.5 text-black outline-none focus:ring-2 focus:ring-black"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium py-2.5 rounded-lg transition-all duration-200 disabled:opacity-60"
+            className="w-full bg-black text-white font-semibold py-3 rounded-md hover:bg-neutral-900 transition disabled:opacity-60"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
         {message && (
-          <p
-            className={`text-center mt-4 text-sm ${
-              message.includes("✅")
-                ? "text-green-600"
-                : "text-red-600 font-medium"
-            }`}
-          >
+          <p className={`text-center mt-4 text-sm ${message.includes("✅") ? "text-green-600" : "text-red-600"}`}>
             {message}
           </p>
         )}
 
-        <p className="text-center text-gray-600 text-sm mt-6">
-          Don’t have an account?{" "}
-          <Link
-            href="/register"
-            className="text-blue-600 font-medium hover:underline"
-          >
-            Register
-          </Link>
+        <p className="text-center text-gray-700 text-sm mt-6">
+          Don’t have an account? <Link href="/register" className="font-semibold hover:underline">Register</Link>
         </p>
       </div>
     </div>
-  );
+  </div>
+);
+
 }
 
 export default Login;
