@@ -6,20 +6,25 @@ import { useEffect, useState } from "react";
 
 const heroSlides = [
   {
-    title: "Hand-painted canvases",
-    subtitle: "Original artwork from independent studios.",
-    image: "/hero-art-1.jpg", // put real images in /public
+    title: "Musical Lady Dolls Set",
+    subtitle: "Handmade Decorative Gift Item showpiece for Homedecor",
+    image: "/hero_image1.jpg",
   },
   {
-    title: "Warm ceramic pieces",
-    subtitle: "Wheel-thrown mugs, plates and vases.",
-    image: "/hero-art-2.jpg",
+    title: "Wall Hangings",
+    subtitle: "Wall hanging made using ice cream sticks",
+    image: "/hero_image2.jpg",
   },
   {
-    title: "Textiles with a story",
-    subtitle: "Handwoven throws and naturally dyed fabrics.",
-    image: "/hero-art-3.jpg",
+    title: "Framed Paintings",
+    subtitle: "Set of Four Framed Painting for Wall Painting Decoration",
+    image: "/hero_image3.jpg",
   },
+  {
+    title: "Dog Painting",
+    subtitle: "Colorful dog hand painted from natural colors",
+    image: "/hero_image3.jpeg",
+  }
 ];
 
 export default function HeroSection() {
@@ -51,8 +56,8 @@ export default function HeroSection() {
 
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-black sm:text-5xl lg:text-[3.2rem] lg:leading-tight">
             A curated marketplace for{" "}
-            <span className="underline decoration-[3px] decoration-yellow-400 underline-offset-4">
-              handmade stories
+            <span className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-[3.2rem] lg:leading-tight text-amber-600">
+              Handmade Stories
             </span>{" "}
             and timeless craft.
           </h1>
@@ -122,9 +127,6 @@ export default function HeroSection() {
                   {slide.subtitle}
                 </p>
               </div>
-              <span className="rounded-full bg-[#FFF7D1] px-3 py-1 text-[11px] font-medium text-black">
-                Artisan spotlight
-              </span>
             </div>
           </div>
 

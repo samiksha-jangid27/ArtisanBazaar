@@ -77,26 +77,32 @@ export default function Navbar() {
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6">
 
           {/* LOGO */}
-          <button
-            onClick={() => go("/")}
-            className="flex items-center gap-3"
+          <span
+            className="flex items-center gap-1"
           >
             <Image
-              src="/artisanbazaar-logo.svg"
+              src="/artisanbazaar-logo.png"
               alt="ArtisanBazaar"
-              width={42}
-              height={42}
+              width={60}
+              height={60}
             />
             
             <div className="flex flex-col items-start leading-tight">
-            <span className="text-lg font-semibold tracking-tight text-black">
-              ArtisanBazaar
-            </span>
+            <div className="flex flex-row items-start leading-tight">
+              <span className="text-lg font-semibold tracking-tight text-black">
+                Artisan
+              </span>
+              <span className="text-lg font-semibold tracking-tight text-amber-600">
+                Bazaar
+              </span>
+
+            </div>
+
             <span className="text-[11px] text-gray-500">
               Local Art · Global Homes
             </span>
           </div>
-          </button>
+          </span>
 
           {/* DESKTOP NAV */}
           <div className="hidden md:flex items-center gap-8">
