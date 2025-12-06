@@ -65,7 +65,7 @@ export default function Navbar() {
     <>
       {/* Scroll Progress Bar */}
       <motion.div
-        className="fixed top-0 left-0 z-[100] h-[3px] bg-black"
+        className="fixed top-0 left-0 z-100 h-3px bg-black"
         style={{ width: `${progress}%` }}
       />
 
@@ -110,7 +110,7 @@ export default function Navbar() {
                 >
                   {item.label}
                   <motion.span
-                    className="absolute inset-x-0 -bottom-1 h-[2px] bg-black origin-left"
+                    className="absolute inset-x-0 -bottom-1 h-2px bg-black origin-left"
                     initial={{ scaleX: 0 }}
                     whileHover={{ scaleX: 1 }}
                     transition={{ duration: 0.25 }}
