@@ -1,99 +1,162 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Menu, X, User } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, ShoppingCart, User, Menu, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
+const navItems = [
+  { label: "Home", path: "/" },
+  { label: "About", path: "/about" },
+  { label: "Shop", path: "/marketplace" },
+  { label: "For Artisans", path: "/for-artisans" },
+  { label: "Contact", path: "/contact" },
+];
+
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const { isLoggedIn } = useAuth();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const toggleMenu = () => setIsOpen(prev => !prev);
-  const handleNavClick = (path) => {
+  const handleNav = (path) => {
     router.push(path);
-    setIsOpen(false);
+    setMobileOpen(false);
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-50 border-b border-gray-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-
-          {/* LOGO + TEXT (BLACK) */}
-          <button 
-            onClick={() => handleNavClick("/")}
-            className="flex items-center cursor-pointer"
-          >
-            <Image 
-              src="/newlogo.png"     
-              width={50}
-              height={50}
-              alt="Artisan Bazaar Logo"
-            />
-            <span className="text-2xl font-bold text-black">Artisan Bazaar</span>
-          </button>
-
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8 font-medium">
-            <Link href="/" className="text-black hover:text-gray-600">Home</Link>
-            <Link href="/gifts" className="text-black hover:text-gray-600">Gifts</Link>
-            <Link href="/about" className="text-black hover:text-gray-600">About</Link>
-            <Link href="/contact" className="text-black hover:text-gray-600">Contact</Link>
-
-            {isLoggedIn ? (
-              <button 
-                onClick={() => handleNavClick("/profile")} 
-                className="flex items-center gap-2 px-4 py-2 border border-gray-400 rounded-full text-black hover:bg-gray-100"
-              >
-                <User size={18}/> Profile
-              </button>
-            ) : (
-              <>
-                <button 
-                  onClick={() => handleNavClick("/login")} 
-                  className="px-4 py-2 border border-gray-400 rounded-full text-black hover:bg-gray-100"
-                >
-                  Login
-                </button>
-                <button 
-                  onClick={() => handleNavClick("/register")} 
-                  className="px-4 py-2 bg-black text-white rounded-full hover:bg-gray-900"
-                >
-                  Register
-                </button>
-              </>
-            )}
+    <nav className="fixed top-0 left-0 z-50 w-full border-b border-gray-200 bg-white/90 backdrop-blur-sm">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:h-18 sm:px-6 lg:px-0">
+        {/* LOGO + NAME */}
+        <button
+          onClick={() => handleNav("/")}
+          className="flex items-center gap-3"
+        >
+          <Image
+            src="/artisanbazaar-logo.svg"
+            alt="ArtisanBazaar"
+            width={40}
+            height={40}
+            priority
+          />
+          <div className="flex flex-col items-start leading-tight">
+            <span className="text-lg font-semibold tracking-tight text-black">
+              ArtisanBazaar
+            </span>
+            <span className="text-[11px] text-gray-500">
+              Local Art · Global Homes
+            </span>
           </div>
+        </button>
 
-          {/* Mobile Icon */}
-          <button onClick={toggleMenu} className="md:hidden text-black">
-            {isOpen ? <X size={26}/> : <Menu size={26}/>}
-          </button>
+        {/* CENTER NAV (DESKTOP) */}
+        <div className="hidden gap-7 md:flex">
+          {navItems.map((item) => (
+            <motion.button
+              key={item.path}
+              onClick={() => handleNav(item.path)}
+              className="relative text-[14px] font-medium text-black"
+              whileHover={{ y: -1 }}
+              transition={{ type: "spring", stiffness: 250, damping: 18 }}
+            >
+              {item.label}
+              <span className="pointer-events-none absolute inset-x-0 -bottom-1 h-[1.5px] origin-left scale-x-0 bg-black transition-transform duration-200 group-hover:scale-x-100" />
+              <span className="pointer-events-none absolute inset-x-0 -bottom-1 h-[1.5px] origin-left scale-x-0 bg-black" />
+              <motion.span
+                className="pointer-events-none absolute inset-x-0 -bottom-1 h-[1.5px] origin-left bg-black"
+                initial={{ scaleX: 0 }}
+                whileHover={{ scaleX: 1 }}
+                transition={{ duration: 0.18 }}
+              />
+            </motion.button>
+          ))}
         </div>
-      </div>
 
-      {/* Mobile Dropdown */}
-      {isOpen && (
-        <div className="md:hidden bg-white w-full shadow-lg border-t border-gray-300 py-4 space-y-2 px-6">
-          <button onClick={() => handleNavClick("/")} className="block text-black text-lg hover:text-gray-600">Home</button>
-          <button onClick={() => handleNavClick("/gifts")} className="block text-black text-lg hover:text-gray-600">Gifts</button>
-          <button onClick={() => handleNavClick("/about")} className="block text-black text-lg hover:text-gray-600">About</button>
-          <button onClick={() => handleNavClick("/contact")} className="block text-black text-lg hover:text-gray-600">Contact</button>
+        {/* RIGHT ICONS (DESKTOP) */}
+        <div className="hidden items-center gap-4 md:flex">
+          <button
+            onClick={() => handleNav("/wishlist")}
+            className="transition hover:opacity-70"
+          >
+            <Heart size={20} className="text-black" />
+          </button>
+          <button
+            onClick={() => handleNav("/cart")}
+            className="transition hover:opacity-70"
+          >
+            <ShoppingCart size={20} className="text-black" />
+          </button>
 
           {isLoggedIn ? (
-            <button onClick={() => handleNavClick("/profile")} className="w-full border border-gray-400 rounded-full py-2 text-black hover:bg-gray-100">Profile</button>
+            <button
+              onClick={() => handleNav("/profile")}
+              className="rounded-full border border-black px-4 py-1.5 text-xs font-medium text-black transition hover:bg-black hover:text-white"
+            >
+              Profile
+            </button>
           ) : (
-            <>
-              <button onClick={() => handleNavClick("/login")} className="w-full border border-gray-400 rounded-full py-2 text-black hover:bg-gray-100">Login</button>
-              <button onClick={() => handleNavClick("/register")} className="w-full bg-black text-white rounded-full py-2 hover:bg-gray-900">Register</button>
-            </>
+            <button
+              onClick={() => handleNav("/login")}
+              className="rounded-full border border-black px-4 py-1.5 text-xs font-medium text-black transition hover:bg-black hover:text-white"
+            >
+              Login
+            </button>
           )}
         </div>
-      )}
+
+        {/* MOBILE MENU BUTTON */}
+        <button
+          onClick={() => setMobileOpen((p) => !p)}
+          className="flex items-center md:hidden"
+        >
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </div>
+
+      {/* MOBILE MENU */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            className="border-t border-gray-200 bg-white md:hidden"
+          >
+            <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-3 text-sm">
+              {navItems.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => handleNav(item.path)}
+                  className="w-full rounded-md px-1 py-2 text-left text-[15px] text-black hover:bg-gray-100"
+                >
+                  {item.label}
+                </button>
+              ))}
+
+              <div className="mt-2 flex items-center gap-4 border-t border-gray-100 pt-3">
+                <Heart
+                  size={20}
+                  className="text-black"
+                  onClick={() => handleNav("/wishlist")}
+                />
+                <ShoppingCart
+                  size={20}
+                  className="text-black"
+                  onClick={() => handleNav("/cart")}
+                />
+                <User
+                  size={20}
+                  className="text-black"
+                  onClick={() =>
+                    handleNav(isLoggedIn ? "/profile" : "/login")
+                  }
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
