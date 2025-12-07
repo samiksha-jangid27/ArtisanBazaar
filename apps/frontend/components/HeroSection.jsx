@@ -41,7 +41,7 @@ export default function HeroSection() {
   const slide = heroSlides[current];
 
   return (
-    <section className="relative w-full bg-linear-to-b from-[#FFF7D1] via-[#FFFDF3] to-white">
+    <section className="relative w-full bg-linear-to-b from-[#f8e272] via-[#FFFDF3] to-white">
       <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 pb-16 pt-28 sm:px-6 lg:flex-row lg:items-center lg:gap-16 lg:px-0">
         {/* LEFT: TEXT */}
         <motion.div
@@ -62,10 +62,10 @@ export default function HeroSection() {
             and timeless craft.
           </h1>
 
-          <p className="mt-4 max-w-xl text-[15px] text-gray-700">
+          <p className="mt-4 max-w-xl text-[20px] text-gray-700">
             Every product on ArtisanBazaar is crafted by an independent maker.
             We handle discovery, payments and logistics so artisans can focus
-            on what they do best: creating.
+            on what they do best: CREATING.
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-4">

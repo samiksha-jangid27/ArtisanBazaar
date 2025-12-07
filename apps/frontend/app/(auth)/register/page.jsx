@@ -65,10 +65,12 @@ function Register() {
 
       setLoading(false);
 
-      if (res.status === 201 || res.data?.message?.includes("success")) {
-        toast.success("✅ Registration successful! Redirecting...");
-        setMessage("✅ Registration successful! Redirecting...");
+      // 🚀 NEW: Correct response handling
+      if (res.data.success) {
+        toast.success("Verification email sent! 📩");
+        setMessage("Verification email sent! Please check your inbox.");
 
+        // Reset fields
         setFormData({
           name: "",
           username: "",
@@ -77,12 +79,14 @@ function Register() {
           confirm_password: "",
         });
 
-        setTimeout(() => router.push("/login"), 1200);
-      } else {
-        const msg = res.data?.ERROR || "Registration failed ❌";
-        toast.error(`❌ ${msg}`);
-        setMessage(`❌ ${msg}`);
+        // Give user time to read message
+        setTimeout(() => router.push("/login"), 2000);
+        return;
       }
+
+      // fallback if API behaved unexpectedly
+      toast.error("Something went wrong ❌");
+      setMessage("Something went wrong ❌");
     } catch (err) {
       const msg = getErrorMessage(err);
       console.error("Register error:", err);
@@ -183,14 +187,22 @@ function Register() {
         </form>
 
         {message && (
-          <p className={`text-center mt-4 text-sm ${message.includes("✅") ? "text-green-600" : "text-red-600"}`}>
+          <p
+            className={`text-center mt-4 text-sm ${
+              message.includes("Verification")
+                ? "text-green-600"
+                : "text-red-600"
+            }`}
+          >
             {message}
           </p>
         )}
 
         <p className="text-center text-gray-600 text-sm mt-6">
-          Already have an account? {" "}
-          <Link href="/login" className="text-blue-600 font-medium hover:underline">Login</Link>
+          Already have an account?{" "}
+          <Link href="/login" className="text-blue-600 font-medium hover:underline">
+            Login
+          </Link>
         </p>
       </div>
     </div>
