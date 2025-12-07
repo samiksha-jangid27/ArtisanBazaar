@@ -7,19 +7,173 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id            Int       @id @default(autoincrement())
-  name          String
-  username      String    @unique
-  email         String    @unique
-  password      String
-  gender        String    @default("Prefer not to say")
-  role          Role      @default(USER)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+enum Role {
+  BUYER
+  SELLER
+  ADMIN
 }
 
-enum Role {
-  USER
-  ADMIN
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      Role     @default(BUYER)
+  gender    String?  @default("Prefer not to say")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  products          Product[]          @relation("SellerProducts")
+  orders            Order[]
+  wishlist          Wishlist?
+  reviews           Review[]
+  storeProfile      StoreProfile?
+  sellerApplication SellerApplication?
+  cart              Cart?
+}
+
+model StoreProfile {
+  id     String  @id @default(cuid())
+  bio    String?
+  avatar String?
+  banner String?
+  userId String  @unique
+  user   User    @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  stock       Int      @default(1)
+  categoryId  String
+  sellerId    String
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  category   Category       @relation(fields: [categoryId], references: [id])
+  seller     User           @relation("SellerProducts", fields: [sellerId], references: [id])
+  images     ProductImage[]
+  reviews    Review[]
+  orderItems OrderItem[]
+
+  wishlistItems WishlistItem[]
+  cartItems     CartItem[]
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  url       String
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Wishlist {
+  id     String         @id @default(cuid())
+  userId String         @unique
+  user   User           @relation(fields: [userId], references: [id])
+  items  WishlistItem[]
+}
+
+model WishlistItem {
+  id         String @id @default(cuid())
+  wishlistId String
+  productId  String
+
+  wishlist Wishlist @relation(fields: [wishlistId], references: [id])
+  product  Product  @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  userId        String
+  totalAmount   Float
+  status        OrderStatus   @default(PENDING)
+  paymentStatus PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+
+  // Relations
+  user  User        @relation(fields: [userId], references: [id])
+  items OrderItem[]
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
+  productId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+model SellerApplication {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  status    String   @default("PENDING") // PENDING / APPROVED / REJECTED
+  bio       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Cart {
+  id     String     @id @default(cuid())
+  userId String     @unique
+  user   User       @relation(fields: [userId], references: [id])
+  items  CartItem[]
+}
+
+model CartItem {
+  id        String @id @default(cuid())
+  cartId    String
+  productId String
+  quantity  Int    @default(1)
+
+  cart    Cart    @relation(fields: [cartId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 }
