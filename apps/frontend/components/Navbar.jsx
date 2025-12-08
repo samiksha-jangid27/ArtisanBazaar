@@ -92,11 +92,11 @@ export default function Navbar() {
         {/* RIGHT ICONS */}
         <div className="hidden md:flex items-center gap-5">
           <IconButton onClick={() => handleNav("/wishlist")} tooltip="Wishlist">
-            <Heart size={20} />
+            <Heart size={20} color="black" />
           </IconButton>
 
           <IconButton onClick={() => handleNav("/cart")} tooltip="Cart">
-            <ShoppingCart size={20} />
+            <ShoppingCart size={20} color="black"/>
           </IconButton>
 
           {/* SELL BUTTON */}
@@ -112,7 +112,7 @@ export default function Navbar() {
           {/* PROFILE */}
           <div className="relative">
             <IconButton onClick={() => (isLoggedIn ? setProfileOpen(!profileOpen) : handleNav("/login"))}>
-              <User size={20} />
+              <User size={20} color="black"/>
             </IconButton>
 
             {profileOpen && isLoggedIn && (
@@ -155,7 +155,7 @@ export default function Navbar() {
           <div className="pt-3 border-t">
             {isLoggedIn ? (
               <>
-                <button onClick={() => handleNav("/dashboard")} className="mobile-item">
+                <button onClick={() => handleNav("/dashboard")} className="mobile-item ">
                   Dashboard
                 </button>
                 <button onClick={() => handleNav("/dashboard/create-product")} className="mobile-item">
