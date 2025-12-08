@@ -4,11 +4,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import axios from "../../../utils/axiosInstance";
 import toast from "react-hot-toast";
+import { Suspense } from "react";
 
-export default function VerifyPage() {
+function VerifyContent() {
   const router = useRouter();
   const params = useSearchParams();
-  const email = params.get("email"); // changed from userId → email
+  const email = params.get("email");
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +23,6 @@ export default function VerifyPage() {
 
     try {
       await axios.post("/api/auth/verify-otp", { email, otp });
-
       toast.success("Email Verified 🎉");
       router.push("/login");
     } catch (error) {
@@ -47,7 +47,6 @@ export default function VerifyPage() {
           We have sent a 6-digit OTP to <span className="font-semibold">{email}</span>
         </p>
 
-        {/* OTP INPUT */}
         <div className="mt-6">
           <input
             type="text"
@@ -61,7 +60,6 @@ export default function VerifyPage() {
           />
         </div>
 
-        {/* VERIFY BUTTON */}
         <button
           onClick={handleVerify}
           className="mt-8 w-full bg-black text-white py-3 rounded-xl 
@@ -78,5 +76,13 @@ export default function VerifyPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">Loading…</div>}>
+      <VerifyContent />
+    </Suspense>
   );
 }
