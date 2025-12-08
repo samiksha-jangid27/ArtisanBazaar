@@ -23,7 +23,7 @@ export default function MarketplacePage() {
   useEffect(() => {
     axios
       .get("/api/categories")
-      .then((res) => setCategories(res.data.categories || []))
+      .then((res) => setCategories(res.data || []))
       .catch(() => {});
   }, []);
 
@@ -83,7 +83,7 @@ export default function MarketplacePage() {
               <input
                 type="text"
                 placeholder="Search handmade products..."
-                className="w-full border border-gray-300 rounded-xl pl-10 pr-4 py-3 text-sm focus:ring-2 focus:ring-[#ff8a00] outline-none"
+                className="w-full border border-gray-300 rounded-xl pl-10 pr-4 py-3 text-sm focus:ring-2 focus:ring-[#ff8a00] outline-none text-black"
                 value={filters.search}
                 onChange={(e) => updateFilter("search", e.target.value)}
               />
@@ -91,7 +91,7 @@ export default function MarketplacePage() {
 
             {/* Categories */}
             <select
-              className="border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-[#ff8a00] outline-none"
+              className="border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-[#ff8a00] outline-none text-black"
               value={filters.category}
               onChange={(e) => updateFilter("category", e.target.value)}
             >
@@ -105,7 +105,7 @@ export default function MarketplacePage() {
 
             {/* Sort */}
             <select
-              className="border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-[#ff8a00] outline-none"
+              className="border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-[#ff8a00] outline-none text-black"
               value={filters.sort}
               onChange={(e) => updateFilter("sort", e.target.value)}
             >
