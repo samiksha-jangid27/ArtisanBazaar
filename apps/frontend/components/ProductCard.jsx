@@ -5,9 +5,12 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
 import { useWishlist } from "../context/WishlistContext";
+import { useCart } from "../context/CartContext";
+
 
 export default function ProductCard({ product }) {
   const { items, addToWishlist, removeFromWishlist } = useWishlist();
+  const { addToCart } = useCart();
 
   const isSaved = items?.some((item) => item.productId === product.id);
 
@@ -60,6 +63,12 @@ export default function ProductCard({ product }) {
               ({product.reviews?.length || 0})
             </span>
           </div>
+          <button
+            onClick={() => addToCart(product.id)}
+            className="mt-3 w-full bg-black text-white rounded-lg py-2"
+          >
+            Add to cart
+          </button>
         </div>
       </Link>
     </motion.div>

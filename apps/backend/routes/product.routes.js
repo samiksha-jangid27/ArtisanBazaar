@@ -1,6 +1,5 @@
 const express = require("express");
 const { protect } = require("../middlewares/protect");
-const { authorizeRoles } = require("../middlewares/roles");
 const upload = require("../middlewares/upload");
 
 const {
@@ -17,17 +16,17 @@ const {
 const router = express.Router();
 
 // PUBLIC ROUTES
-router.get("/", getAllProducts); // main marketplace API
+router.get("/", getAllProducts); // marketplace
 router.get("/featured", getFeaturedProducts);
 router.get("/trending", getTrendingProducts);
 router.get("/seller/:sellerId", getSellerProducts);
 router.get("/:productId", getSingleProduct);
 
-// SELLER ROUTES
+// ANY LOGGED-IN USER CAN CREATE / UPDATE / DELETE OWN PRODUCTS
+
 router.post(
   "/",
   protect,
-  authorizeRoles("SELLER"),
   upload.array("images", 5),
   createProduct
 );
@@ -35,16 +34,13 @@ router.post(
 router.put(
   "/:productId",
   protect,
-  authorizeRoles("SELLER"),
   upload.array("images", 5),
   updateProduct
 );
 
-// DELETE — SELLER or ADMIN
 router.delete(
   "/:productId",
   protect,
-  authorizeRoles("SELLER", "ADMIN"),
   deleteProduct
 );
 

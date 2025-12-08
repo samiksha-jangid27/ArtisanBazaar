@@ -1,30 +1,37 @@
-const { verifyToken } = require("../utils/generateTokens");
+// routes/auth.routes.js
+const express = require("express");
+const {
+  register,
+  verifyOtp,
+  resendVerificationOtp,
+  login,
+  forgotPassword,
+  resetPassword,
+  getMe,
+} = require("../controllers/auth.controller");
+const { protect } = require("../middlewares/protect");
 
-function auth(req, res, next) {
-    const header = req.headers.authorization;
+const router = express.Router();
 
-    if (!header || !header.startsWith("Bearer ")) {
-        return res.status(401).json({ ERROR: "No token provided" });
-    }
+// Register + send OTP
+router.post("/register", register);
 
-    const token = header.split(" ")[1];
+// Verify OTP (email verification)
+router.post("/verify-otp", verifyOtp);
 
-    try {
-        const decoded = verifyToken(token);
-        req.user = decoded;
-        next();
-    } catch (e) {
-        return res.status(401).json({ ERROR: "Invalid or expired token" });
-    }
-}
+// Resend verification OTP
+router.post("/resend-otp", resendVerificationOtp);
 
-function requireRole(...allowedRoles) {
-    return (req, res, next) => {
-        if (!allowedRoles.includes(req.user.role)) {
-            return res.status(403).json({ ERROR: "Not authorized" });
-        }
-        next();
-    };
-}
+// Login
+router.post("/login", login);
 
-module.exports = { auth, requireRole };
+// Forgot password → send OTP
+router.post("/forgot-password", forgotPassword);
+
+// Reset password using OTP
+router.post("/reset-password", resetPassword);
+
+// Get logged-in user
+router.get("/me", protect, getMe);
+
+module.exports = router;

@@ -11,12 +11,12 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <AuthProvider>
-          <CartProvider>
+          
             <WishlistProvider>
-              {children}
+              <CartProvider>{children}</CartProvider>
+
               <Toaster />
             </WishlistProvider>
-          </CartProvider>
         </AuthProvider>
       </body>
     </html>

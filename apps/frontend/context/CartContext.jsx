@@ -1,70 +1,92 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import axios from "../utils/axiosInstance";
+import { useAuth } from "./AuthContext";
+import toast from "react-hot-toast";
 
 const CartContext = createContext(null);
 
 export const CartProvider = ({ children }) => {
-  // ✅ initialize from localStorage in useState (no effect setState)
-  const [cart, setCart] = useState(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const stored = window.localStorage.getItem("cart");
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  });
+  const { token, isLoggedIn, logout } = useAuth();
+  const [cart, setCart] = useState(null);
 
-  // ✅ persist whenever cart changes
+  // Load cart after login
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+    if (!isLoggedIn) return;
 
-  const addToCart = (product) => {
-    setCart((prev) => {
-      const existing = prev.find((p) => p.id === product.id);
-      if (existing) {
-        return prev.map((p) =>
-          p.id === product.id ? { ...p, qty: p.qty + 1 } : p
-        );
+    axios
+      .get("/api/cart", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setCart(res.data))
+      .catch(() => setCart({ items: [] }));
+  }, [isLoggedIn]);
+
+  // ---------------- ADD TO CART ----------------
+  const addToCart = async (productId) => {
+    if (!isLoggedIn) return toast.error("Please log in first");
+
+    try {
+      await axios.post(
+        "/api/cart",
+        { productId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      toast.success("Added to cart");
+
+      const updated = await axios.get("/api/cart", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setCart(updated.data);
+    } catch (error) {
+      console.error("Add to cart error:", error);
+      if (error.response?.status === 401) {
+        toast.error("Session expired. Please login again.");
+        logout();
+      } else {
+        toast.error("Failed to add to cart");
       }
-      return [...prev, { ...product, qty: 1 }];
+    }
+  };
+
+  // ---------------- UPDATE QUANTITY ----------------
+  const updateQty = async (itemId, quantity) => {
+    await axios.patch(
+      `/api/cart/${itemId}`,
+      { quantity },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const updated = await axios.get("/api/cart", {
+      headers: { Authorization: `Bearer ${token}` },
     });
+
+    setCart(updated.data);
   };
 
-  const increaseQty = (id) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, qty: item.qty + 1 } : item
-      )
-    );
-  };
+  // ---------------- REMOVE ITEM ----------------
+  const removeItem = async (itemId) => {
+    await axios.delete(`/api/cart/${itemId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-  const decreaseQty = (id) => {
-    setCart((prev) =>
-      prev
-        .map((item) =>
-          item.id === id ? { ...item, qty: Math.max(1, item.qty - 1) } : item
-        )
-        .filter((item) => item.qty > 0)
-    );
-  };
+    const updated = await axios.get("/api/cart", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-  const removeFromCart = (id) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+    setCart(updated.data);
   };
-
-  const clearCart = () => setCart([]);
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, increaseQty, decreaseQty, removeFromCart, clearCart }}
+      value={{ cart, addToCart, updateQty, removeItem }}
     >
       {children}
     </CartContext.Provider>
   );
 };
 
-export const useCartContext = () => useContext(CartContext);
+export const useCart = () => useContext(CartContext);

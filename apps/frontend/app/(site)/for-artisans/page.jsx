@@ -22,7 +22,7 @@ export default function ForArtisansPage() {
       </div>
 
       <a
-        href="/seller/products/create"
+        href="/dashboard/create-product"
         className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition"
       >
         Start Selling Now

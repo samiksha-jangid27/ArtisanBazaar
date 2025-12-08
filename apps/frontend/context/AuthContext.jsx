@@ -10,42 +10,36 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load token from localStorage once
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const stored = localStorage.getItem("token");
+    const stored = typeof window !== "undefined" && localStorage.getItem("token");
     if (!stored) {
       setLoading(false);
       return;
     }
 
-    const init = () => {
-      try {
-        const decoded = jwtDecode(stored);
-        setToken(stored);
-        setUser(decoded);
-      } catch (err) {
-        console.error("Invalid token, clearing", err);
-        localStorage.removeItem("token");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    setTimeout(init, 0); // avoid sync setState warning
+    try {
+      const decoded = jwtDecode(stored);
+      setToken(stored);
+      setUser(decoded);
+    } catch (err) {
+      console.error("Invalid token", err);
+      localStorage.removeItem("token");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const login = (newToken) => {
     if (typeof window !== "undefined") {
       localStorage.setItem("token", newToken);
     }
+
     setToken(newToken);
+
     try {
-      const decoded = jwtDecode(newToken);
-      setUser(decoded);
+      setUser(jwtDecode(newToken));
     } catch (err) {
-      console.error("Failed to decode token", err);
+      console.error("Failed to decode", err);
     }
   };
 
@@ -58,20 +52,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        token,
-        user,
-        isLoggedIn: !!token,
-        loading,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ token, user, isLoggedIn: !!token, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => useContext(AuthContext);
-

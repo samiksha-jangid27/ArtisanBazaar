@@ -3,6 +3,8 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import Link from "next/link"; 
+
 
 const heroSlides = [
   {
@@ -69,16 +71,17 @@ export default function HeroSection() {
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-4">
-            <motion.button
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.97 }}
-              className="rounded-full bg-black px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:shadow-md"
-            >
-              Explore marketplace
-            </motion.button>
-            <button className="rounded-full border border-black px-5 py-2.5 text-sm font-medium text-black transition hover:bg-black hover:text-white">
-              Become a seller
-            </button>
+            <Link href="/marketplace">
+              <motion.button
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.97 }}
+                className="rounded-full bg-black px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:shadow-md"
+              >
+                Explore marketplace
+              </motion.button>
+            </Link>
+
+
           </div>
 
           <div className="mt-6 flex flex-wrap gap-6 text-xs text-gray-600">

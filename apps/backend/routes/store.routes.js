@@ -12,13 +12,12 @@ const {
 const router = express.Router();
 
 // SELLER: Get your profile
-router.get("/me", protect, authorizeRoles("SELLER"), getMyStore);
+router.get("/me", protect, getMyStore);
 
 // SELLER: Update store profile
 router.put(
   "/me",
   protect,
-  authorizeRoles("SELLER"),
   upload.fields([
     { name: "avatar", maxCount: 1 },
     { name: "banner", maxCount: 1 },

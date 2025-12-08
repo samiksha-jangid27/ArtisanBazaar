@@ -1,92 +1,59 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import axios from "../utils/axiosInstance";
 import { useAuth } from "./AuthContext";
 import toast from "react-hot-toast";
 
-const WishlistContext = createContext();
+const WishlistContext = createContext(null);
 
 export const WishlistProvider = ({ children }) => {
-  const { token, user } = useAuth();
+  const { token, isLoggedIn } = useAuth();
+  const [wishlist, setWishlist] = useState([]);
 
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // ----------------------------
-  // LOAD WISHLIST IF LOGGED IN
-  // ----------------------------
+  // ---------------- LOAD WISHLIST ----------------
   useEffect(() => {
-    if (!token || !user) {
-      setItems([]);
-      setLoading(false);
-      return;
-    }
+    if (!isLoggedIn) return;
 
-    const fetchWishlist = async () => {
-      try {
-        const res = await axios.get("/api/wishlist", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+    axios
+      .get("/api/wishlist", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setWishlist(res.data.items || []))
+      .catch(() => setWishlist([]));
+  }, [isLoggedIn]);
 
-        setItems(res.data.items || []);
-      } catch (err) {
-        console.error("Wishlist load failed:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWishlist();
-  }, [token, user]);
-
-  // ----------------------------
-  // ADD TO WISHLIST
-  // ----------------------------
-  const addToWishlist = async (productId) => {
-    if (!token) return toast.error("Please log in first.");
-
-    try {
-      const res = await axios.post(
-        "/api/wishlist/add",
-        { productId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setItems(res.data.items);
-      toast.success("Added to wishlist ❤️");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to add to wishlist");
-    }
+  // ---------------- CHECK IF WISHLISTED ----------------
+  const isWishlisted = (productId) => {
+    return wishlist.some((item) => item.productId === productId);
   };
 
-  // ----------------------------
-  // REMOVE
-  // ----------------------------
-  const removeFromWishlist = async (productId) => {
+  // ---------------- TOGGLE WISHLIST ----------------
+  const toggleWishlist = async (productId) => {
+    if (!isLoggedIn) return toast.error("Please log in first");
+
     try {
       const res = await axios.post(
-        "/api/wishlist/remove",
+        "/api/wishlist/toggle",
         { productId },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
-      setItems(res.data.items);
-      toast.success("Removed from wishlist");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to remove item");
+      setWishlist(res.data.items);
+      toast.success("Wishlist updated");
+    } catch (error) {
+      toast.error("Could not update wishlist");
     }
   };
 
   return (
     <WishlistContext.Provider
       value={{
-        items,
-        loading,
-        addToWishlist,
-        removeFromWishlist,
+        wishlist,
+        isWishlisted,
+        toggleWishlist,
       }}
     >
       {children}

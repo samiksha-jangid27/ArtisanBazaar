@@ -8,8 +8,7 @@ datasource db {
 }
 
 enum Role {
-  BUYER
-  SELLER
+  USER
   ADMIN
 }
 
@@ -34,8 +33,7 @@ model User {
   username  String   @unique
   email     String   @unique
   password  String
-  role      Role     @default(BUYER)
-  gender    String?  @default("Prefer not to say")
+  role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -45,9 +43,18 @@ model User {
   wishlist          Wishlist?
   reviews           Review[]
   storeProfile      StoreProfile?
-  sellerApplication SellerApplication?
   cart              Cart?
+
+  // OTP + verification
+  otpCode           String?
+  otpExpiresAt      DateTime?
+  isVerified        Boolean   @default(false)
+
+  // Forgot-password OTP
+  resetOtpCode      String?
+  resetOtpExpiresAt DateTime?
 }
+
 
 model StoreProfile {
   id     String  @id @default(cuid())
@@ -148,17 +155,6 @@ model Review {
 
   product Product @relation(fields: [productId], references: [id])
   user    User    @relation(fields: [userId], references: [id])
-}
-
-model SellerApplication {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  status    String   @default("PENDING") // PENDING / APPROVED / REJECTED
-  bio       String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id])
 }
 
 model Cart {

@@ -1,174 +1,106 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import { useState } from "react";
+import axios from "../../../utils/axiosInstance";
+import AuthInput from "../../../components/AuthInput";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../context/AuthContext";
-import { ArrowLeft } from "lucide-react";
-import axios from "axios";
 import toast from "react-hot-toast";
 
-function Login() {
-  const [formData, setFormData] = useState({ input: "", password: "" });
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
 
-  const BASE_URL =
-    process.env.NODE_ENV === "production"
-      ? process.env.NEXT_PUBLIC_BACKEND_SERVER_URL
-      : process.env.NEXT_PUBLIC_BACKEND_LOCAL_URL;
+  const [emailOrUsername, setEmailOrUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const getErrorMessage = (err, fallback = "Login failed ❌") => {
-    if (err.response?.data?.ERROR) return err.response.data.ERROR;
-    if (err.response?.data?.message) return err.response.data.message;
-    if (err.message?.includes("timeout")) return "Request timed out. Try again.";
-    if (err.request) return "No response from server. Check your network.";
-    return fallback;
-  };
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) =>
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage("");
-
-    const input = formData.input.trim();
-    const password = formData.password.trim();
-
-    if (!input || !password) {
-      const msg = "Email/Username and Password are required";
-      setMessage(`⚠️ ${msg}`);
-      toast.error(`⚠️ ${msg}`);
-      setLoading(false);
-      return;
-    }
-
-    const payload = {
-      password,
-      ...(input.includes("@")
-        ? { email: input.toLowerCase() }
-        : { username: input.toLowerCase() }),
-    };
+    setErrorMsg("");
 
     try {
-      const res = await axios.post(`${BASE_URL}/api/auth/login`, payload, {
-        headers: { "Content-Type": "application/json" },
-        timeout: 8000,
+      const res = await axios.post("/api/auth/login", {
+        emailOrUsername,
+        password,
       });
 
-      setLoading(false);
-
-      // backend might return error telling user to verify email
-      if (res.data.ERROR === "Please verify your email first") {
-        setMessage("Please verify your email before logging in.");
-        toast.error("Verify your email before logging in.");
-        return;
+      const token = res.data?.token;
+      if (!token) {
+        throw new Error("No token returned from server");
       }
 
-      if (res.data?.token) {
-        login(res.data.token);
-        toast.success("✅ Login successful! Redirecting...");
-        setMessage("✅ Login successful! Redirecting...");
-        setTimeout(() => router.push("/profile"), 1000);
-      } else {
-        toast.error("Unexpected response format ❌");
-        setMessage("Unexpected response format ❌");
-      }
+      // ✅ update context + localStorage
+      login(token);
+
+      toast.success("Logged in successfully");
+      router.push("/"); // you can change to "/account" later
     } catch (err) {
-      const msg = getErrorMessage(err);
-      console.error("Login error:", err);
+      console.error("LOGIN ERROR:", err);
+      const backendError =
+        err.response?.data?.ERROR ||
+        err.response?.data?.message ||
+        err.message ||
+        "Invalid login.";
+
+      setErrorMsg(backendError);
+      toast.error(backendError);
+    } finally {
       setLoading(false);
-      toast.error(`❌ ${msg}`);
-      setMessage(`❌ ${msg}`);
     }
   };
 
   return (
-    <div className="min-h-screen w-full flex gap-0 md:gap-10 bg-white">
-      {/* LEFT SIDE — optional video/illustration */}
-      <div className="w-1/2 hidden md:flex items-center justify-center bg-white">
-        <video autoPlay muted playsInline className="w-150 h-150 bg-white">
-          <source src="/ARTISANBAZAAR.mp4" type="video/mp4" />
-        </video>
-      </div>
+    <section className="min-h-screen bg-gradient-to-b from-[#f8e272] to-white flex items-center justify-center px-6">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-md bg-white p-8 rounded-3xl shadow-xl"
+      >
+        <h1 className="text-3xl font-semibold text-center text-gray-900">
+          Welcome back
+        </h1>
+        <p className="text-center text-gray-600 text-sm mt-1">
+          Login to continue shopping
+        </p>
 
-      {/* RIGHT SIDE — LOGIN FORM */}
-      <div className="w-full md:w-[58%] flex flex-col items-center justify-center p-8 bg-white animate-slideIn relative">
-        <button
-          onClick={() => router.push("/")}
-          className="absolute top-6 right-6 text-gray-700 hover:text-black transition flex items-center gap-1"
-        >
-          <ArrowLeft size={18} /> Back
-        </button>
+        <form className="mt-8 flex flex-col gap-4" onSubmit={handleLogin}>
+          <AuthInput
+            label="Email or Username"
+            value={emailOrUsername}
+            onChange={setEmailOrUsername}
+          />
+          <AuthInput
+            label="Password"
+            type="password"
+            value={password}
+            onChange={setPassword}
+          />
 
-        <h2 className="text-4xl font-bold text-black mb-8">Artisan Bazaar</h2>
-
-        <div className="w-full max-w-sm">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-gray-800 font-semibold mb-1">
-                Email / Username
-              </label>
-              <input
-                type="text"
-                name="input"
-                value={formData.input}
-                onChange={handleChange}
-                placeholder="your@email.com"
-                className="w-full border border-black rounded-md px-4 py-2.5 text-black outline-none focus:ring-2 focus:ring-black"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-800 font-semibold mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="••••••••"
-                className="w-full border border-black rounded-md px-4 py-2.5 text-black outline-none focus:ring-2 focus:ring-black"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-black text-white font-semibold py-3 rounded-md hover:bg-neutral-900 transition disabled:opacity-60"
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-          </form>
-
-          {message && (
-            <p
-              className={`text-center mt-4 text-sm ${
-                message.includes("✅") ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              {message}
-            </p>
+          {errorMsg && (
+            <p className="text-red-600 text-sm text-center">{errorMsg}</p>
           )}
 
-          <p className="text-center text-gray-700 text-sm mt-6">
-            Don’t have an account?{" "}
-            <Link
-              href="/register"
-              className="font-semibold hover:underline"
-            >
-              Register
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full mt-2 bg-black text-white py-2.5 rounded-xl text-sm font-medium hover:opacity-90 transition disabled:opacity-60"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        <p className="text-center text-sm mt-4 text-gray-700">
+          Don’t have an account?{" "}
+          <a href="/register" className="underline font-medium">
+            Register
+          </a>
+        </p>
+      </motion.div>
+    </section>
   );
 }
-
-export default Login;

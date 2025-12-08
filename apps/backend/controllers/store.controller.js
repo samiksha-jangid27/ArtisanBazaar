@@ -39,10 +39,10 @@ async function updateStore(req, res) {
     const userId = req.user.id;
     const { bio } = req.body;
 
-    // Only sellers allowed
-    if (req.user.role !== "SELLER") {
-      return res.status(403).json({ ERROR: "Only sellers can update store" });
-    }
+    // Only sellers allowed - now all users are sellers
+    // if (req.user.role !== "SELLER") {
+    //   return res.status(403).json({ ERROR: "Only sellers can update store" });
+    // }
 
     // Fetch or create store profile
     let store = await prisma.storeProfile.findUnique({

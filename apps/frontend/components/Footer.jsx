@@ -47,8 +47,8 @@ export default function Footer() {
         <div>
           <h3 className="text-sm font-semibold text-white tracking-wide">For Artisans</h3>
           <ul className="mt-4 space-y-2 text-sm">
-            <li className="hover:text-white cursor-pointer">Become a Seller</li>
-            <li className="hover:text-white cursor-pointer">Seller Dashboard</li>
+            <li className="hover:text-white cursor-pointer">Sell on ArtisanBazaar</li>
+            <li className="hover:text-white cursor-pointer">Dashboard</li>
             <li className="hover:text-white cursor-pointer">Payments</li>
             <li className="hover:text-white cursor-pointer">Policies</li>
           </ul>

@@ -187,22 +187,23 @@ async function deleteProduct(req, res) {
 /* ----------------------------------------------------------
    FEATURED PRODUCTS
 ---------------------------------------------------------- */
-async function getFeaturedProducts(req, res) {
+const getFeaturedProducts = async (req, res) => {
   try {
     const products = await prisma.product.findMany({
       where: { featured: true },
-      take: 10,
-      include: { images: true },
-      orderBy: { createdAt: "desc" },
+      include: {
+        images: true,
+        seller: { select: { name: true } },
+      },
+      take: 8,
     });
 
-    res.json(products);
+    res.json({ products });
   } catch (err) {
     console.error("FEATURED ERROR:", err);
-    res.status(500).json({ ERROR: "Failed to fetch featured products" });
+    res.status(500).json({ ERROR: "Failed to load featured products" });
   }
-}
-
+};
 /* ----------------------------------------------------------
    SELLER PRODUCTS
 ---------------------------------------------------------- */
@@ -326,6 +327,33 @@ async function updateProduct(req, res) {
   }
 }
 
+const getProductById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        images: true,
+        seller: {
+          select: { id: true, name: true },
+        },
+        category: true,
+      },
+    });
+
+    if (!product) {
+      return res.status(404).json({ ERROR: "Product not found" });
+    }
+
+    res.json(product);
+  } catch (err) {
+    console.error("GET PRODUCT ERROR:", err);
+    res.status(500).json({ ERROR: "Something went wrong" });
+  }
+};
+
+
 module.exports = {
   createProduct,
   getAllProducts,
@@ -334,5 +362,6 @@ module.exports = {
   getFeaturedProducts,
   getSellerProducts,
   getTrendingProducts,
-  updateProduct
+  updateProduct,
+  getProductById
 };

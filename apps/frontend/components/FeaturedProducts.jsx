@@ -9,13 +9,13 @@ export default function FeaturedProducts() {
 
   useEffect(() => {
     const load = async () => {
-      try {
-        const res = await axios.get("/products/featured");;
-        setProducts(res.data || []);
-      } catch (err) {
-        console.error("Featured error", err);
-      }
-    };
+  try {
+    const res = await axios.get("/api/products/featured");
+    setProducts(res.data.products || []);
+  } catch (err) {
+    console.error("Featured error:", err);
+  }
+};
     load();
   }, []);
 

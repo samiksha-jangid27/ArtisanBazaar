@@ -11,17 +11,10 @@ async function becomeSeller(req, res) {
 
     if (!user) return res.status(404).json({ ERROR: "User not found" });
 
-    if (user.role === "SELLER")
-      return res.status(400).json({ ERROR: "Already a seller" });
-
-    const updated = await prisma.user.update({
-      where: { id: userId },
-      data: { role: "SELLER" },
-    });
-
+    // Everyone is a seller now by default
     res.json({
       message: "You are now a seller!",
-      user: updated,
+      user: user,
     });
   } catch (err) {
     console.error("BECOME SELLER ERROR:", err);

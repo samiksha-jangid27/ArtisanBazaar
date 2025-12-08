@@ -1,11 +1,21 @@
 const jwt = require("jsonwebtoken");
 
-function createToken(payload, expiresIn = "7d") {
-    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
+const SECRET = process.env.JWT_SECRET;
+const EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
+
+function generateToken(user) {
+  return jwt.sign(
+    {
+      id: user.id,
+      name: user.name,          
+      email: user.email,
+      username: user.username,
+      role: user.role,
+      isVerified: user.isVerified, 
+    },
+    SECRET,
+    { expiresIn: EXPIRES_IN }
+  );
 }
 
-function verifyToken(token) {
-    return jwt.verify(token, process.env.JWT_SECRET);
-}
-
-module.exports = { createToken, verifyToken };
+module.exports = generateToken;
