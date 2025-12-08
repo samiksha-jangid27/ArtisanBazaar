@@ -2,7 +2,7 @@
 
 import { use } from "react";
 import { useEffect, useState } from "react";
-import axios from "../../../../utils/axiosInstance";
+import axios from "../../../../utils/axiosInstance"
 import { useWishlistCon } from "../../../../hooks/useWishlist";
 import { useCartt } from "../../../../hooks/useCart";
 import Image from "next/image";
