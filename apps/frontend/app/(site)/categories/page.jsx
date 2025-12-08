@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "@/utils/axiosInstance";
+import axios from "../../../utils/axiosInstance";
 import Link from "next/link";
 import Image from "next/image";
 
