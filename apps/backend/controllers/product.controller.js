@@ -165,6 +165,7 @@ async function deleteProduct(req, res) {
 
     const product = await prisma.product.findUnique({
       where: { id: productId },
+      include: { images: true },
     });
 
     if (!product) {
@@ -175,7 +176,34 @@ async function deleteProduct(req, res) {
       return res.status(403).json({ ERROR: "Not allowed" });
     }
 
-    await prisma.product.delete({ where: { id: productId } });
+    // -----------------------------
+    // 1. DELETE CLOUDINARY IMAGES
+    // -----------------------------
+    if (product.images.length > 0) {
+      await Promise.all(
+        product.images.map((img) => {
+          const publicId = img.url
+            .split("/upload/")[1]
+            .replace(/\.[^/.]+$/, ""); // removes file extension
+
+          return cloudinary.uploader.destroy(publicId);
+        })
+      );
+    }
+
+    // -----------------------------
+    // 2. DELETE IMAGES FROM DATABASE
+    // -----------------------------
+    await prisma.productImage.deleteMany({
+      where: { productId },
+    });
+
+    // -----------------------------
+    // 3. DELETE PRODUCT
+    // -----------------------------
+    await prisma.product.delete({
+      where: { id: productId },
+    });
 
     res.json({ message: "Product deleted successfully" });
   } catch (err) {
@@ -183,6 +211,8 @@ async function deleteProduct(req, res) {
     res.status(500).json({ ERROR: "Failed to delete product" });
   }
 }
+
+
 
 /* ----------------------------------------------------------
    FEATURED PRODUCTS

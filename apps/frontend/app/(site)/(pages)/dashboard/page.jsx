@@ -5,7 +5,7 @@ import axios from "../../../../utils/axiosInstance";
 import { useAuth } from "../../../../context/AuthContext";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Settings, Package, ShoppingBag, User as UserIcon } from "lucide-react";
+import { Package } from "lucide-react";
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
@@ -13,12 +13,26 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("products");
 
+  // -------------------------------
+  // DELETE FUNCTION
+  // -------------------------------
+  const handleDelete = async (productId) => {
+  if (!confirm("Delete this product?")) return;
+
+  try {
+    await axios.delete(`/api/products/${productId}`);
+    setProducts((prev) => prev.filter((p) => p.id !== productId));
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
   useEffect(() => {
     if (!user) return;
 
     const fetchProducts = async () => {
       try {
-        // Use the seller endpoint which now works for all users
         const res = await axios.get(`/api/products/seller/${user.id}`);
         setProducts(res.data || []);
       } catch (error) {
@@ -46,7 +60,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header Background */}
+      {/* Header */}
       <div className="relative w-full bg-linear-to-b from-[#f8e272] to-[#FFFDF3] pt-32 pb-20 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-6">
@@ -60,7 +74,7 @@ export default function DashboardPage() {
               <p className="text-gray-700 mt-1">@{user.username}</p>
             </div>
           </div>
-          
+
           <Link
             href="/dashboard/create-product"
             className="rounded-full bg-black px-8 py-3 text-sm font-medium text-white shadow-lg hover:shadow-xl hover:scale-105 transition transform"
@@ -71,8 +85,9 @@ export default function DashboardPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 -mt-10 pb-20">
+
         {/* Tabs */}
-        <div className="flex gap-8 border-b border-gray-200 mb-10 bg-white/80 backdrop-blur-md p-2 rounded-2xl inline-flex shadow-sm">
+        <div className="gap-8 border-b border-gray-200 mb-10 bg-white/80 backdrop-blur-md p-2 rounded-2xl inline-flex shadow-sm">
           <button
             onClick={() => setActiveTab("products")}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
@@ -83,6 +98,7 @@ export default function DashboardPage() {
           >
             My Listings
           </button>
+
           <button
             onClick={() => setActiveTab("profile")}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
@@ -95,7 +111,7 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* Content */}
+        {/* Products Tab */}
         {activeTab === "products" && (
           <div>
             {loading ? (
@@ -111,7 +127,7 @@ export default function DashboardPage() {
                   href="/dashboard/create-product"
                   className="inline-flex items-center gap-2 text-black font-semibold hover:underline"
                 >
-                  Create your first listing &rarr;
+                  Create your first listing →
                 </Link>
               </div>
             ) : (
@@ -136,22 +152,25 @@ export default function DashboardPage() {
                       )}
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                     </div>
-                    
+
                     <div className="p-5">
                       <h3 className="font-semibold text-gray-900 truncate text-lg">
                         {product.title}
                       </h3>
-                      <p className="text-gray-500 text-sm mt-1">
-                        ₹{product.price}
-                      </p>
-                      
+                      <p className="text-gray-500 text-sm mt-1">₹{product.price}</p>
+
+                      {/* Buttons */}
                       <div className="mt-5 flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
-                         <button className="flex-1 text-xs font-medium bg-black text-white py-2.5 rounded-full hover:bg-gray-800 transition">
-                           Edit
-                         </button>
-                         <button className="flex-1 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 py-2.5 rounded-full transition">
-                           Delete
-                         </button>
+                        <button className="flex-1 text-xs font-medium bg-black text-white py-2.5 rounded-full hover:bg-gray-800 transition">
+                          Edit
+                        </button>
+
+                        <button
+                          onClick={() => handleDelete(product.id)}
+                          className="flex-1 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 py-2.5 rounded-full transition"
+                        >
+                          Delete
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -161,9 +180,11 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* Profile Tab */}
         {activeTab === "profile" && (
           <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-10 max-w-2xl">
             <h3 className="text-2xl font-bold mb-8 tracking-tight">Account Details</h3>
+
             <div className="space-y-6">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Full Name</label>
@@ -171,27 +192,29 @@ export default function DashboardPage() {
                   {user.name}
                 </div>
               </div>
+
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Email Address</label>
                 <div className="w-full px-5 py-3 rounded-2xl bg-gray-50 text-gray-900 font-medium border border-gray-100">
                   {user.email}
                 </div>
               </div>
+
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Username</label>
                 <div className="w-full px-5 py-3 rounded-2xl bg-gray-50 text-gray-900 font-medium border border-gray-100">
                   @{user.username}
                 </div>
               </div>
-              
+
               <div className="pt-8 border-t border-gray-100 mt-8">
-                 <button
-                   onClick={logout}
-                   className="text-red-600 font-semibold hover:text-red-700 text-sm flex items-center gap-2"
-                 >
-                   <span className="w-2 h-2 rounded-full bg-red-600"></span>
-                   Sign Out
-                 </button>
+                <button
+                  onClick={logout}
+                  className="text-red-600 font-semibold hover:text-red-700 text-sm flex items-center gap-2"
+                >
+                  <span className="w-2 h-2 rounded-full bg-red-600"></span>
+                  Sign Out
+                </button>
               </div>
             </div>
           </div>
